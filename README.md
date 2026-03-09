@@ -1,8 +1,10 @@
-# DCIT313-GroupLogicLab-Medical-Expert-System
+# DCIT313-LogicLab-Medical-Expert-System
 
-## DCIT 313: Group Project – Knowledge-Based Expert System
+## DCIT 313: Group Project - Expert System
 
-A **Knowledge-Based System (KBS)** that functions as an **Intelligent Agent** for medical diagnosis. The system maps **perceptions** (user-reported symptoms) to **actions** (diagnosis, explanations, and treatment recommendations) using symbolic AI and logical inference.
+This is a medical expert system built with SWI-Prolog and Python. It takes in symptoms from the user and tries to figure out what condition they might have based on the rules in the knowledge base.
+
+> **Note**: This is just for our coursework - not actual medical advice.
 
 ---
 
@@ -20,128 +22,76 @@ A **Knowledge-Based System (KBS)** that functions as an **Intelligent Agent** fo
 
 ---
 
-## System Purpose
+## What It Does
 
-This Medical Expert System assists users in identifying potential medical conditions based on their reported symptoms. It covers 8 conditions across two categories:
+The system currently handles 8 conditions:
 
 - **Infections**: Flu, COVID-19, Malaria, Tuberculosis
-- **Chronic Diseases**: Diabetes, Hypertension, Asthma, Arthritis
+- **Chronic conditions**: Diabetes, Hypertension, Asthma, Arthritis
 
-The system uses **forward chaining** and **pattern matching** through SWI-Prolog's inference engine to reason over a knowledge base of medical facts and rules, providing:
-- A ranked list of possible diagnoses with confidence scores
-- Explanations of the condition type and cause
-- Treatment recommendations
-- Associated risk factors
-
-> **Disclaimer**: This system is for educational purposes only and should not replace professional medical advice.
-
----
-
-## Technical Stack
-
-| Component | Technology |
-|-----------|------------|
-| Logic Engine | SWI-Prolog |
-| User Interface | Python 3 + pyswip |
-| Version Control | GitHub |
+When you run the program, it asks you about different symptoms (yes/no), then it checks those symptoms against the Prolog rules and tells you:
+- Which condition is the best match (with a percentage)
+- What type of condition it is and what causes it
+- Recommended treatment
+- Risk factors
+- Any other conditions that partially matched
 
 ---
 
 ## Project Structure
 
 ```
-DCIT313-GroupLogicLab-Medical-Expert-System/
-├── knowledge_base/
-│   └── medical_expert_system.pl    # Prolog facts & rules (KB)
-├── interface/
-│   └── main.py                     # Python UI using pyswip
-├── docs/
-│   └── knowledge_engineering_report.md  # Knowledge acquisition report
-├── requirements.txt                # Python dependencies
-├── .gitignore
-└── README.md                       # This file
+knowledge_base/
+    medical_expert_system.pl   -- Prolog rules and facts
+interface/
+    main.py                    -- Python script (uses pyswip)
+docs/
+    knowledge_engineering_report.md
+requirements.txt
+README.md
 ```
 
-| Directory | Purpose | AI Role |
-|-----------|---------|---------|
-| `/knowledge_base` | Prolog `.pl` file with logical Facts and Rules | Memory/Intelligence |
-| `/interface` | Python script that queries the Prolog engine | User Interaction |
-| `/docs` | Knowledge Engineering report and documentation | Knowledge Acquisition |
+- `/knowledge_base` contains Prolog facts and rules (this is where the "intelligence" lives)
+- `/interface` has the Python script that talks to the Prolog engine and handles user I/O
+- `/docs` has the report on how we gathered and encoded the medical knowledge
 
 ---
 
-## Prerequisites
+## How to Run
 
-1. **SWI-Prolog** must be installed on your system:
-   - macOS: `brew install swi-prolog`
-   - Ubuntu/Debian: `sudo apt-get install swi-prolog`
-   - Windows: Download from [swi-prolog.org](https://www.swi-prolog.org/download/stable)
+### Prerequisites
+- SWI-Prolog installed (`brew install swi-prolog` on Mac)
+- Python 3.8+
 
-2. **Python 3.8+** must be installed.
-
----
-
-## Installation & Setup
-
+### Setup
 ```bash
-# 1. Clone the repository
-git clone https://github.com/<your-username>/DCIT313-GroupLogicLab-Medical-Expert-System.git
-cd DCIT313-GroupLogicLab-Medical-Expert-System
+git clone https://github.com/bigSouu/DCIT313-LogicLab-Medical-Expert-System.git
+cd DCIT313-LogicLab-Medical-Expert-System
 
-# 2. Install Python dependencies
 pip install -r requirements.txt
 
-# 3. Run the Expert System
 python interface/main.py
 ```
 
----
-
-## How to Use
-
-1. Run the system with `python interface/main.py`
-2. Select **"1. Start Diagnosis"** from the main menu
-3. Answer `yes` or `no` for each symptom the system asks about
-4. View the diagnosis results, including:
-   - Most likely condition and confidence score
-   - Condition category and cause
-   - Treatment recommendations
-   - Risk factors
-   - Other possible conditions
-5. Select **"2. View Knowledge Base"** to browse all conditions and symptoms
+### Usage
+1. Pick "Start Diagnosis" from the menu
+2. Answer yes or no for each symptom
+3. View the results
+4. You can also pick "View Knowledge Base" to see all the conditions and symptoms the system knows about
 
 ---
 
-## How It Works (Agent Architecture)
+## How It Works
 
-```
-┌──────────────────────────────────────────────────┐
-│                  ENVIRONMENT                      │
-│            (User with symptoms)                   │
-└──────────────┬───────────────────▲────────────────┘
-               │ Perceptions       │ Actions
-               │ (Symptoms)        │ (Diagnosis)
-               ▼                   │
-┌──────────────────────────────────────────────────┐
-│              INTELLIGENT AGENT                    │
-│  ┌─────────────────────────────────────────────┐  │
-│  │  Python Interface (interface/main.py)       │  │
-│  │  - Collects user symptoms (Sensors)         │  │
-│  │  - Displays results (Actuators)             │  │
-│  └──────────────┬──────────────▲───────────────┘  │
-│                 │ Queries      │ Results           │
-│                 ▼              │                   │
-│  ┌─────────────────────────────────────────────┐  │
-│  │  SWI-Prolog Engine (knowledge_base/*.pl)    │  │
-│  │  - Facts: conditions, symptoms, causes      │  │
-│  │  - Rules: diagnosis logic, match scoring    │  │
-│  │  - Inference: pattern matching & reasoning  │  │
-│  └─────────────────────────────────────────────┘  │
-└──────────────────────────────────────────────────┘
-```
+The Python script (main.py) acts as the front-end. It collects symptoms from the user and sends queries to the Prolog engine through pyswip. The Prolog file has all the medical knowledge stored as facts (like which symptoms go with which condition) and rules (like how to calculate a match score). Prolog does the actual reasoning/inference, and Python just displays the results.
+
+Basically:
+1. User inputs symptoms, Python asserts them into Prolog working memory
+2. Prolog computes match scores for each condition
+3. Python reads the scores back and displays them ranked
 
 ---
 
 ## License
 
-This project is developed for academic purposes as part of the DCIT 313 course at the University of Ghana.
+Academic project for DCIT 313, University of Ghana.

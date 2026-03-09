@@ -1,19 +1,12 @@
-% ============================================================
-%  MEDICAL EXPERT SYSTEM - Knowledge Base
-%  DCIT 313: Group LogicLab
-%  A Knowledge-Based System (KBS) for Medical Diagnosis
-%  Logic Engine: SWI-Prolog
-% ============================================================
+% Medical Expert System - Knowledge Base
+% DCIT 313 Group Project (LogicLab)
+% SWI-Prolog
 
-% Dynamic Symptom Storage
+% Dynamic predicates for storing user responses
 :- dynamic(has_symptom/1).
 :- dynamic(neg_symptom/1).
 
-% ============================================================
-%  FACTS: Conditions and their categories
-% ============================================================
-
-% condition(Name, Type)
+% --- Conditions and their categories ---
 condition(flu, infection).
 condition(covid19, infection).
 condition(malaria, infection).
@@ -23,11 +16,7 @@ condition(hypertension, disease).
 condition(asthma, disease).
 condition(arthritis, disease).
 
-% ============================================================
-%  FACTS: Causes of conditions
-% ============================================================
-
-% caused_by(Condition, Cause)
+% --- Causes ---
 caused_by(flu, virus).
 caused_by(covid19, virus).
 caused_by(malaria, parasite).
@@ -37,66 +26,58 @@ caused_by(hypertension, cardiovascular_disorder).
 caused_by(asthma, inflammatory_condition).
 caused_by(arthritis, autoimmune_condition).
 
-% ============================================================
-%  FACTS: Symptoms associated with each condition
-% ============================================================
+% --- Symptoms for each condition ---
 
-% symptom(Condition, SymptomName)
-
-% --- Flu ---
+% Flu
 symptom(flu, fever).
 symptom(flu, cough).
 symptom(flu, headache).
 symptom(flu, fatigue).
 symptom(flu, sore_throat).
 
-% --- COVID-19 ---
+% COVID-19
 symptom(covid19, fever).
 symptom(covid19, cough).
 symptom(covid19, fatigue).
 symptom(covid19, loss_of_taste).
 symptom(covid19, difficulty_breathing).
 
-% --- Malaria ---
+% Malaria
 symptom(malaria, fever).
 symptom(malaria, chills).
 symptom(malaria, sweating).
 symptom(malaria, headache).
 symptom(malaria, nausea).
 
-% --- Tuberculosis ---
+% Tuberculosis
 symptom(tuberculosis, cough).
 symptom(tuberculosis, chest_pain).
 symptom(tuberculosis, weight_loss).
 symptom(tuberculosis, night_sweats).
 
-% --- Diabetes ---
+% Diabetes
 symptom(diabetes, frequent_urination).
 symptom(diabetes, excessive_thirst).
 symptom(diabetes, fatigue).
 symptom(diabetes, blurred_vision).
 
-% --- Hypertension ---
+% Hypertension
 symptom(hypertension, headache).
 symptom(hypertension, dizziness).
 symptom(hypertension, chest_pain).
 
-% --- Asthma ---
+% Asthma
 symptom(asthma, wheezing).
 symptom(asthma, shortness_of_breath).
 symptom(asthma, chest_tightness).
 symptom(asthma, cough).
 
-% --- Arthritis ---
+% Arthritis
 symptom(arthritis, joint_pain).
 symptom(arthritis, stiffness).
 symptom(arthritis, swelling).
 
-% ============================================================
-%  FACTS: Treatment recommendations
-% ============================================================
-
-% treatment(Condition, Recommendation)
+% --- Treatment recommendations ---
 treatment(flu, 'Rest, stay hydrated, take over-the-counter fever reducers (e.g., paracetamol). See a doctor if symptoms worsen.').
 treatment(covid19, 'Self-isolate, monitor oxygen levels, stay hydrated, and seek immediate medical attention if breathing becomes difficult.').
 treatment(malaria, 'Seek medical attention immediately. Antimalarial drugs (e.g., ACTs) are the standard treatment. Do not self-medicate.').
@@ -106,11 +87,7 @@ treatment(hypertension, 'Reduce salt intake, exercise regularly, manage stress, 
 treatment(asthma, 'Use prescribed inhalers (bronchodilators), avoid known triggers, and have an asthma action plan from your doctor.').
 treatment(arthritis, 'Stay physically active, apply warm/cold compresses, and consult a rheumatologist for anti-inflammatory medication.').
 
-% ============================================================
-%  FACTS: Risk factors
-% ============================================================
-
-% risk_factor(Condition, Factor)
+% --- Risk factors ---
 risk_factor(flu, 'Close contact with infected individuals').
 risk_factor(flu, 'Weak immune system').
 risk_factor(covid19, 'Close contact without masks').
@@ -128,19 +105,17 @@ risk_factor(asthma, 'Exposure to air pollution').
 risk_factor(arthritis, 'Age above 50').
 risk_factor(arthritis, 'Family history of arthritis').
 
-% ============================================================
-%  RULES: Interactive Questioning System
-% ============================================================
+% --- Interactive asking rules ---
 
-% If the user already confirmed a symptom, succeed immediately
+% Already confirmed -> succeed
 ask(Symptom) :-
     has_symptom(Symptom), !.
 
-% If the user already denied a symptom, fail immediately
+% Already denied -> fail
 ask(Symptom) :-
     neg_symptom(Symptom), !, fail.
 
-% Otherwise, ask the user
+% Not yet asked -> prompt the user
 ask(Symptom) :-
     format('Do you have ~w? (yes/no): ', [Symptom]),
     read(Response),
@@ -151,23 +126,21 @@ ask(Symptom) :-
         fail
     ).
 
-% ============================================================
-%  RULES: Diagnosis Logic (Inference Engine)
-% ============================================================
+% --- Diagnosis rules ---
 
-% A condition is diagnosed if ALL its symptoms are confirmed
+% Diagnose a condition if all its symptoms are present
 diagnose(Condition) :-
     condition(Condition, _),
     findall(S, symptom(Condition, S), Symptoms),
     check_all_symptoms(Symptoms).
 
-% Check that all symptoms in the list are confirmed
+% Go through a list of symptoms and check each one
 check_all_symptoms([]).
 check_all_symptoms([H|T]) :-
     ask(H),
     check_all_symptoms(T).
 
-% Calculate a match percentage for partial matches
+% Compute how many symptoms match (as a percentage)
 match_score(Condition, Score, Matched, Total) :-
     condition(Condition, _),
     findall(S, symptom(Condition, S), AllSymptoms),
@@ -177,9 +150,7 @@ match_score(Condition, Score, Matched, Total) :-
     length(MatchedSymptoms, Matched),
     Score is (Matched / Total) * 100.
 
-% ============================================================
-%  RULES: Explanation System
-% ============================================================
+% --- Explanation rules ---
 
 explain_type(infection) :-
     write('This condition is caused by microorganisms such as bacteria, viruses, fungi, or parasites.'), nl.
@@ -202,9 +173,7 @@ explain_risks(Condition) :-
         (write('  - '), write(Factor), nl)
     ).
 
-% ============================================================
-%  RULES: System Entry Point (for direct Prolog use)
-% ============================================================
+% --- Entry point (for running directly in SWI-Prolog) ---
 
 start :-
     retractall(has_symptom(_)),

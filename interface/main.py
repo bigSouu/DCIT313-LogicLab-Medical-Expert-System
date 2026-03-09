@@ -1,8 +1,6 @@
-"""
-MEDICAL EXPERT SYSTEM - Python Interface
-DCIT 313: Group LogicLab
-Bridge between User and Prolog Knowledge Base using pyswip.
-"""
+# Medical Expert System - Python Interface
+# DCIT 313 Group Project (LogicLab)
+# This script connects to the Prolog knowledge base using pyswip
 
 import os
 import sys
@@ -10,8 +8,7 @@ from pyswip import Prolog
 
 
 def get_kb_path():
-    """Resolve the path to the Prolog knowledge base file."""
-    # Navigate from /interface to /knowledge_base
+    """Get the path to the Prolog KB file."""
     base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
     kb_path = os.path.join(base_dir, "knowledge_base", "medical_expert_system.pl")
     if not os.path.exists(kb_path):
@@ -21,58 +18,47 @@ def get_kb_path():
 
 
 def init_prolog():
-    """Initialize the Prolog engine and load the knowledge base."""
+    """Set up Prolog and load the KB."""
     prolog = Prolog()
     kb_path = get_kb_path()
     prolog.consult(kb_path)
-    print("[INFO] Knowledge base loaded successfully.\n")
+    print("Knowledge base loaded.\n")
     return prolog
 
 
-# ──────────────────────────────────────────────
-#  Helper: Query the Prolog KB
-# ──────────────────────────────────────────────
+# --- Helper functions to query the KB ---
 
 def get_all_conditions(prolog):
-    """Retrieve all conditions from the knowledge base."""
+    """Get all conditions from the KB."""
     results = list(prolog.query("condition(C, T)"))
     return [(r["C"], r["T"]) for r in results]
 
 
 def get_symptoms_for(prolog, condition):
-    """Retrieve all symptoms for a given condition."""
+    """Get symptoms for a specific condition."""
     results = list(prolog.query(f"symptom({condition}, S)"))
     return [r["S"] for r in results]
 
 
 def get_cause(prolog, condition):
-    """Retrieve the cause of a condition."""
     results = list(prolog.query(f"caused_by({condition}, Cause)"))
     return results[0]["Cause"] if results else "Unknown"
 
 
 def get_treatment(prolog, condition):
-    """Retrieve recommended treatment for a condition."""
     results = list(prolog.query(f"treatment({condition}, T)"))
     return results[0]["T"] if results else "No recommendation available."
 
 
 def get_risk_factors(prolog, condition):
-    """Retrieve risk factors for a condition."""
     results = list(prolog.query(f"risk_factor({condition}, F)"))
     return [r["F"] for r in results]
 
 
-# ──────────────────────────────────────────────
-#  Core: Symptom-Based Diagnosis (Inference)
-# ──────────────────────────────────────────────
+# --- Core diagnosis logic ---
 
 def collect_user_symptoms(prolog):
-    """
-    Present all unique symptoms to the user and collect yes/no answers.
-    This maps Perceptions (user inputs) → stored facts for inference.
-    """
-    # Gather all unique symptoms from the KB
+    """Ask user about each symptom and store their answers in Prolog."""
     results = list(prolog.query("symptom(_, S)"))
     all_symptoms = sorted(set(r["S"] for r in results))
 
@@ -84,7 +70,6 @@ def collect_user_symptoms(prolog):
             answer = input(f"  Do you have {symptom.replace('_', ' ')}? (yes/no): ").strip().lower()
             if answer in ("yes", "y"):
                 confirmed.append(symptom)
-                # Assert the symptom into Prolog's working memory
                 prolog.assertz(f"has_symptom({symptom})")
                 break
             elif answer in ("no", "n"):
@@ -97,10 +82,7 @@ def collect_user_symptoms(prolog):
 
 
 def run_diagnosis(prolog, confirmed_symptoms):
-    """
-    Use Prolog's inference engine to determine the best matching condition.
-    Computes a match score for each condition and ranks them.
-    """
+    """Query Prolog to score each condition against the user's symptoms."""
     conditions = get_all_conditions(prolog)
     scored = []
 
@@ -115,17 +97,14 @@ def run_diagnosis(prolog, confirmed_symptoms):
             if matched > 0:
                 scored.append((condition, ctype, score, matched, total))
 
-    # Sort by score descending
     scored.sort(key=lambda x: x[2], reverse=True)
     return scored
 
 
-# ──────────────────────────────────────────────
-#  Display: Results and Explanations
-# ──────────────────────────────────────────────
+# --- Display functions ---
 
 def display_results(prolog, ranked_conditions, confirmed_symptoms):
-    """Display diagnosis results with explanations."""
+    """Show the diagnosis results to the user."""
     print("\n" + "=" * 55)
     print("            DIAGNOSIS RESULTS")
     print("=" * 55)
@@ -135,7 +114,6 @@ def display_results(prolog, ranked_conditions, confirmed_symptoms):
         print("Please consult a healthcare professional for proper evaluation.")
         return
 
-    # Show top diagnosis
     top = ranked_conditions[0]
     condition, ctype, score, matched, total = top
 
@@ -144,7 +122,6 @@ def display_results(prolog, ranked_conditions, confirmed_symptoms):
     print(f"  Confidence:            {score:.1f}% ({matched}/{total} symptoms matched)")
     print(f"  Cause:                 {get_cause(prolog, condition)}")
 
-    # Explanation of the condition type
     print()
     if ctype == "infection":
         print("  [Explanation] This condition is caused by microorganisms")
@@ -153,18 +130,15 @@ def display_results(prolog, ranked_conditions, confirmed_symptoms):
         print("  [Explanation] This condition is not caused by microorganisms")
         print("  but by genetic, metabolic, or chronic factors.")
 
-    # Treatment recommendation
     treatment = get_treatment(prolog, condition)
     print(f"\n  Recommended Action:\n  {treatment}")
 
-    # Risk factors
     risks = get_risk_factors(prolog, condition)
     if risks:
         print("\n  Risk Factors:")
         for r in risks:
             print(f"    - {r}")
 
-    # Show other possible conditions if any
     if len(ranked_conditions) > 1:
         print("\n" + "-" * 55)
         print("  Other Possible Conditions:")
@@ -179,7 +153,7 @@ def display_results(prolog, ranked_conditions, confirmed_symptoms):
 
 
 def display_knowledge_base(prolog):
-    """Display the full knowledge base contents for browsing."""
+    """Print out all conditions and their symptoms."""
     print("\n" + "=" * 55)
     print("         KNOWLEDGE BASE OVERVIEW")
     print("=" * 55)
@@ -195,18 +169,13 @@ def display_knowledge_base(prolog):
     print()
 
 
-# ──────────────────────────────────────────────
-#  Main Application Loop
-# ──────────────────────────────────────────────
-
 def reset_working_memory(prolog):
-    """Clear all asserted symptoms from Prolog's working memory."""
+    """Clear previous symptoms so we can start fresh."""
     list(prolog.query("retractall(has_symptom(_))"))
     list(prolog.query("retractall(neg_symptom(_))"))
 
 
 def main():
-    """Main entry point for the Medical Expert System."""
     print("=" * 55)
     print("      MEDICAL EXPERT SYSTEM")
     print("      Group LogicLab - DCIT 313")
@@ -227,14 +196,12 @@ def main():
         choice = input("\n  Select an option (1-3): ").strip()
 
         if choice == "1":
-            # Reset working memory for a fresh consultation
             reset_working_memory(prolog)
 
             print("\n" + "-" * 55)
             print("  SYMPTOM ASSESSMENT")
             print("-" * 55)
 
-            # Perception Phase: Collect symptoms from user
             confirmed = collect_user_symptoms(prolog)
 
             if not confirmed:
@@ -244,7 +211,6 @@ def main():
             print(f"\nYou reported {len(confirmed)} symptom(s): "
                   f"{', '.join(s.replace('_', ' ') for s in confirmed)}")
 
-            # Action Phase: Run inference and display results
             ranked = run_diagnosis(prolog, confirmed)
             display_results(prolog, ranked, confirmed)
 

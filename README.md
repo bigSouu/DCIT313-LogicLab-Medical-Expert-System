@@ -4,7 +4,7 @@
 
 This is a medical expert system built with SWI-Prolog and Python. It takes in symptoms from the user and tries to figure out what condition they might have based on the rules in the knowledge base.
 
-> **Note**: This is just for our coursework - not actual medical advice.
+> **Note**: This is not based strictly on  medical knowledge.
 
 ---
 
@@ -15,10 +15,10 @@ This is a medical expert system built with SWI-Prolog and Python. It takes in sy
 | Afatsawo Bright | 22183667 | Project Manager |
 | Stephanie Apenteng | 22044374 | Knowledge Engineer |
 | Yeboah Kelvin Kofi Breman | 22063527 | Prolog Developer |
-| Precious Ayomah Asummasum | 22176813 | Prolog Developer |
+| Precious Ayomah Asummasum | 22176813 | Programmer|
 | Roselyn Sakyi | 22012206 | Knowledge Engineer |
 | Somuah Anim Kofi | 22013390 | Python Interface Developer |
-| Aaron Tetteh | 22059189 | Prolog Developer |
+| Aaron Tetteh | 22059189 | Programmer |
 
 ---
 

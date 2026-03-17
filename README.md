@@ -18,7 +18,7 @@ This is a medical expert system built with SWI-Prolog and Python. It takes in sy
 | Precious Ayomah Asummasum | 22176813 | Programmer|
 | Roselyn Sakyi | 22012206 | Knowledge Engineer |
 | Somuah Anim Kofi | 22013390 | Python Interface Developer |
-| Aaron Tetteh | 22059189 | Prolog Developer |
+| Aaron Tetteh | 22059189 | Programmer |
 
 ---
 

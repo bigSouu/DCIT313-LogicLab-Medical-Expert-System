@@ -4,7 +4,7 @@
 
 This is a medical expert system built with SWI-Prolog and Python. It takes in symptoms from the user and tries to figure out what condition they might have based on the rules in the knowledge base.
 
-> **Note**: This is just for our coursework - not actual medical advice.
+> **Note**: This is not based strictly on  medical knowledge.
 
 ---
 

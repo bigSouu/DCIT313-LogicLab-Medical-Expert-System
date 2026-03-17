@@ -13,12 +13,13 @@ This is a medical expert system built with SWI-Prolog and Python. It takes in sy
 | Name | Student ID | Role |
 |------|-----------|------|
 | Afatsawo Bright | 22183667 | Knowledge Engineer |
-| Stephanie Apenteng | 22044374 | Knowledge Engineer |
+| Stephanie Osani Payin Apenteng | 22044374 | Knowledge Engineer |
 | Yeboah Kelvin Kofi Breman | 22063527 | Prolog Developer |
 | Precious Ayomah Asummasum | 22176813 | Prolog Developer |
 | Roselyn Sakyi | 22012206 | Python Interface Developer |
 | Somuah Anim Kofi | 22013390 | Python Interface Developer |
 | Aaron Tetteh | 22059189 | Documentation & Testing |
+
 
 ---
 
@@ -66,8 +67,8 @@ README.md
 ### Setup
 ```bash
 git clone https://github.com/bigSouu/DCIT313-LogicLab-Medical-Expert-System.git
-cd DCIT313-LogicLab-Medical-Expert-System
 
+cd DCIT313-LogicLab-Medical-Expert-System
 pip install -r requirements.txt
 
 python interface/main.py

@@ -13,7 +13,7 @@ This is a medical expert system built with SWI-Prolog and Python. It takes in sy
 | Name | Student ID | Role |
 |------|-----------|------|
 | Afatsawo Bright | 22183667 | Project Manager |
-| Stephanie Apenteng | 22044374 | Knowledge Engineer |
+| Stephanie Osani Payin Apenteng | 22044374 | Knowledge Engineer |
 | Yeboah Kelvin Kofi Breman | 22063527 | Prolog Developer |
 | Precious Ayomah Asummasum | 22176813 | Programmer|
 | Roselyn Sakyi | 22012206 | Knowledge Engineer |
